@@ -1,120 +1,86 @@
-import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { FormControl, Button, MenuItem, Select, FormHelperText,
-  TextField, DialogContentText } from '@material-ui/core'
+import React, { Component } from 'react'
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Button
+} from '@material-ui/core'
 
+class Form extends Component {
+  state = this.getInitState()
 
+  getInitState () {
+    const { exercise } = this.props
 
-const useStyles = makeStyles((theme) => ({
-  formControl: {
-    width: 300
-  }
-}));
-
-
-export default props => {
-
-
-  // const getInitialState = () => {
-    // const { exercise } = props
-    const [ state, setState ] = useState({})
-
-  //   return exercise ? exercise : {
-  //     title: "", 
-  //     description: "", 
-  //     muscles: ""
-  //   }
-  // }
-
-  useEffect(() => {
-    setState(
-      props.exercise 
-      ? props.exercise : {exercise: {
-        title: '', 
-        description: '', 
-        muscles: ''
-      }})
-  }, [props.exercise])
-
-
-  const handleChange = name => ({ target: { value } }) => {
-    setState({
-      ...state,  
-      [name] : value 
-    })
-    console.log(state)
-  } 
-
-  const handleSubmit = () => {
-    //Validate
-    console.log(state)
-    const { title } = state
-    props.onSubmit({
-      id: title.toLowerCase().replace(/ /g, '-'),
-      ...state
-    })
+    return exercise || {
+      title: '',
+      description: '',
+      muscles: ''
     }
+  }
 
-  // setState({
-  //   open: false, 
-  //   exercise: {
-  //     title: '', 
-  //     description: '', 
-  //     muscles: ''
-  //   }
-  // })
+  handleChange = ({ target: { value, name } }) =>
+    this.setState({
+      [name]: value
+    })
 
-  const { title, description, muscles } = state,
-        { muscles: categories } = props
-  const classes = useStyles()
+  handleSubmit = () =>
+    this.props.onSubmit({
+      id: this.state.title.toLowerCase().replace(/ /g, '-'),
+      ...this.state
+    })
 
+  render () {
+    const { title, description, muscles } = this.state
+    const { exercise, muscles: categories } = this.props
 
-  return (
-    <form >
-      <DialogContentText>
-        Fill out the form below
-      </DialogContentText>
-      <TextField
-        fullWidth
-        label="Title"
-        onChange={handleChange('title')}
-        value={title}
-        type="email"
-        className={classes.formControl}
-      />
-      <br />
-      <FormControl 
-        fullWidth
-        className={ classes.formControl }>
-      <Select
-        labelId="demo-simple-select-helper-label"
-        id="demo-simple-select-helper"
-        onChange={handleChange('muscles')}
-        value={muscles}
-      >
-      { categories.map(category =>
-        <MenuItem
-          value={category}>{ category }
-        </MenuItem>
-        )}
-      </Select>
-      <FormHelperText>Some important helper text</FormHelperText>
-      </FormControl>
+    return (
+      <form>
         <TextField
-        multiline
-        fullWidth
-        label="Description"
-        onChange={handleChange('description')}
-        value={description}
-        className={classes.formControl}
-      />
-      <br /> 
-      <Button 
-        onClick={handleSubmit} 
-        color="primary"
-        variant="raised">
-        { props.exercise ? 'Edit' : 'Create' }  
-      </Button>
-  </form>
-  )
+          label='Title'
+          value={title}
+          name='title'
+          onChange={this.handleChange}
+          margin='normal'
+          fullWidth
+        />
+        <FormControl fullWidth margin='normal'>
+          <InputLabel htmlFor='muscles'>Muscles</InputLabel>
+          <Select
+            value={muscles}
+            name='muscles'
+            onChange={this.handleChange}
+          >
+            {categories.map(category => (
+              <MenuItem key={category} value={category}>
+                {category}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <TextField
+          multiline
+          rows='4'
+          label='Description'
+          value={description}
+          name='description'
+          onChange={this.handleChange}
+          margin='normal'
+          fullWidth
+        />
+        <Button
+          color='primary'
+          variant='contained'
+          onClick={this.handleSubmit}
+          disabled={!title || !muscles}
+        >
+          {exercise ? 'Edit' : 'Create'}
+        </Button>
+      </form>
+    )
+  }
 }
+
+export default Form

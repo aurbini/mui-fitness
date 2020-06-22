@@ -1,105 +1,101 @@
-import React, { Component, Fragment } from 'react';
-import { Header, Footer } from "./Layouts"; 
-import Exercises from "./Exercises"; 
-import { muscles, exercises } from "../store"; 
+import React, { PureComponent } from 'react'
+import { CssBaseline } from '@material-ui/core'
+import { Header, Footer } from './Layouts'
+import { Viewer } from './Exercises'
+import { muscles, exercises } from '../store'
+import { Provider } from '../context'
 
-const syles = theme => console.log(theme);
-
-export default class extends Component {
-
+class App extends PureComponent {
   state = {
-    exercises, 
-    category: '',
-    exercise: {}
+    exercises,
+    exercise: {},
+    editMode: false,
+    category: ''
   }
 
-  getExerciseByMuscle(){
-    const initExercises = muscles.reduce((exercises, category) => ({
-      ...exercises,
-      [category]: []
-    }), {})
+  getExercisesByMuscles () {
+    const initExercises = muscles.reduce(
+      (exercises, category) => ({
+        ...exercises,
+        [category]: []
+      }),
+      {}
+    )
 
     return Object.entries(
-      this.state.exercises.reduce(( exercises, exercise ) => {
-        const { muscles } = exercise; 
+      this.state.exercises.reduce((exercises, exercise) => {
+        const { muscles } = exercise
 
-        exercises[muscles] = [...exercises[muscles], exercise] 
+        exercises[muscles] = [...exercises[muscles], exercise]
 
-        return exercises; 
+        return exercises
       }, initExercises)
     )
   }
 
-  handleCategoryChange = category => 
+  handleCategorySelect = category =>
     this.setState({
-      category 
+      category
     })
-  
-  handleExerciseSelect = id => 
+
+  handleExerciseSelect = id =>
     this.setState(({ exercises }) => ({
       exercise: exercises.find(ex => ex.id === id),
       editMode: false
     }))
-  
 
-  onExerciseCreate = exercise => 
+  handleExerciseCreate = exercise =>
     this.setState(({ exercises }) => ({
-      exercises: [ 
-        ...exercises, 
-        exercise
-      ]
+      exercises: [...exercises, exercise]
     }))
 
-  handleExerciseDelete = id => 
+  handleExerciseDelete = id =>
     this.setState(({ exercises, exercise, editMode }) => ({
-      exercises: exercises.filter( ex => ex.id !== id), 
-      editMode: false, 
-      exercise: exercise.id === id ? {} : exercise,
-      editMode: exercise.id === id ? {} : editMode
+      exercises: exercises.filter(ex => ex.id !== id),
+      editMode: exercise.id === id ? false : editMode,
+      exercise: exercise.id === id ? {} : exercise
     }))
-  
-  handleExerciseSelectEdit = id => 
+
+  handleExerciseSelectEdit = id =>
     this.setState(({ exercises }) => ({
       exercise: exercises.find(ex => ex.id === id),
       editMode: true
     }))
 
-  handleExerciseEdit = exercise => 
+  handleExerciseEdit = exercise =>
     this.setState(({ exercises }) => ({
       exercises: [
         ...exercises.filter(ex => ex.id !== exercise.id),
         exercise
-      ], 
+      ],
       exercise
     }))
-  
-  render(){
-    const exercises = this.getExerciseByMuscle();
-    const { category, exercise, editMode } = this.state 
-    console.log(exercises); 
+
+  getContext = () => ({
+    muscles,
+    ...this.state,
+    exercisesByMuscles: this.getExercisesByMuscles(),
+    onCategorySelect: this.handleCategorySelect,
+    onCreate: this.handleExerciseCreate,
+    onEdit: this.handleExerciseEdit,
+    onSelectEdit: this.handleExerciseSelectEdit,
+    onDelete: this.handleExerciseDelete,
+    onSelect: this.handleExerciseSelect
+  })
+
+  render () {
     return (
-      <Fragment> 
-        <Header 
-          muscles={muscles}
-          onExerciseCreate= {this.onExerciseCreate}/>
-        <Exercises 
-          onEdit={this.handleExerciseEdit}
-          editMode={editMode}
-          exercise={exercise}
-          muscles={muscles}
-          onSelect={this.handleExerciseSelect}
-          onSelectEdit={this.handleExerciseSelectEdit}
-          onDelete={this.handleExerciseDelete}
-          exercises={exercises} 
-          category={category}
-        /> 
-        <Footer 
-          muscles={muscles} 
-          onSelect={this.handleCategoryChange}
-          category={category}  
-        />
-      </Fragment>
+      <Provider value={this.getContext()}>
+        <CssBaseline />
+
+        <Header />
+
+        <Viewer />
+
+        <Footer />
+      </Provider>
     )
   }
 }
-      
+
+export default App

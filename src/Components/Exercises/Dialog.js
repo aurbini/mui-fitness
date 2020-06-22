@@ -1,52 +1,69 @@
-import React, { Fragment, useState } from 'react';
-import { DialogContent, DialogTitle } from '@material-ui/core';
-import { Button, Dialog } from '@material-ui/core'
-import Add from '@material-ui/icons/Add';
-import Form from './Form'
+  
+import React, { Component } from 'react'
+import {
+  Fab,
+  Dialog as MuiDialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText
+} from '@material-ui/core'
+import { Add } from '@material-ui/icons'
+import { Form } from './'
+import { ExercisesContext } from '../../context'
 
-export default props => {
+class Dialog extends Component {
+  static contextType = ExercisesContext
 
-  const [ state, setState ] = useState({
+  state = {
     open: false
-  })
- 
-  const handleToggle = () => {
-    setState({
-      ...state, 
-      open: !state.open
+  }
+
+  handleToggle = () => {
+    this.setState({
+      open: !this.state.open
     })
   }
 
-  const handleFormSubmit = exercise => {
-    handleToggle()
+  handleFormSubmit = exercise => {
+    this.handleToggle()
 
-    props.onCreate(exercise)
+    this.context.onCreate(exercise)
   }
 
+  render () {
+    const { open } = this.state
+    const { muscles } = this.context
 
-  const { open } = state,
-        { muscles, onCreate } = props 
+    return (
+      <>
+        <Fab
+          onClick={this.handleToggle}
+          color='secondary'
+          size='small'
+        >
+          <Add />
+        </Fab>
 
-  return (
-    <Fragment>
-      <Button 
-        variant="outlined"
-        mini 
-        color="default"
-        onClick={handleToggle}>
-        <Add />
-      </Button>
-      <Dialog 
-        open={open}
-        onClose={handleToggle} 
-      >
-        <DialogTitle id="form-dialog-title">Create a new Exercise</DialogTitle>
-        <DialogContent>
-        <Form 
-          muscles={muscles} 
-          onSubmit={handleFormSubmit} /> 
-        </DialogContent>
-      </Dialog>
-    </Fragment>
-  )
+        <MuiDialog
+          open={open}
+          onClose={this.handleToggle}
+          fullWidth
+          maxWidth='xs'
+        >
+          <DialogTitle>Create a New Exercise</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Please fill out the form below.
+            </DialogContentText>
+            <Form
+              muscles={muscles}
+              onSubmit={this.handleFormSubmit}
+            />
+          </DialogContent>
+        </MuiDialog>
+      </>
+    )
+  }
 }
+
+export default Dialog

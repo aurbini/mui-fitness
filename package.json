@@ -12,6 +12,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
+    "recompose": "^0.30.0",
     "typeface-roboto": "0.0.75"
   },
   "scripts": {
@@ -38,6 +39,7 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^2.2.0"
+    "gh-pages": "^2.2.0",
+    "standard": "^14.3.4"
   }
 }
