@@ -1,10 +1,11 @@
 import React from "react";
 import { AppBar, Tabs, Tab, useMediaQuery, useTheme } from "@mui/material";
-import { withContext } from "../../context";
+import { useExercises } from "../../context";
 
-const Footer = ({ muscles, category, onCategorySelect }) => {
+const Footer = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const { muscles, category, onCategorySelect } = useExercises();
 
   const muscleGroups = ["", ...muscles];
 
@@ -34,4 +35,4 @@ const Footer = ({ muscles, category, onCategorySelect }) => {
   );
 };
 
-export default withContext(Footer);
+export default Footer;

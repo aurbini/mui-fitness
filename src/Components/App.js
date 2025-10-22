@@ -1,19 +1,18 @@
-import React, { PureComponent } from "react";
+import React, { useState, useMemo } from "react";
 import { CssBaseline } from "@mui/material";
-import { Header, Footer } from "./Layouts";
-import { Viewer } from "./Exercises";
+import Header from "./Layouts/Header";
+import Footer from "./Layouts/Footer";
+import Viewer from "./Exercises/Viewer";
 import { muscles, exercises } from "../store";
 import { Provider } from "../context";
 
-class App extends PureComponent {
-  state = {
-    exercises,
-    exercise: {},
-    editMode: false,
-    category: "",
-  };
+const App = () => {
+  const [exercisesList, setExercisesList] = useState(exercises);
+  const [exercise, setExercise] = useState({});
+  const [editMode, setEditMode] = useState(false);
+  const [category, setCategory] = useState("");
 
-  getExercisesByMuscles() {
+  const getExercisesByMuscles = useMemo(() => {
     const initExercises = muscles.reduce(
       (exercises, category) => ({
         ...exercises,
@@ -23,76 +22,73 @@ class App extends PureComponent {
     );
 
     return Object.entries(
-      this.state.exercises.reduce((exercises, exercise) => {
+      exercisesList.reduce((exercises, exercise) => {
         const { muscles } = exercise;
-
         exercises[muscles] = [...exercises[muscles], exercise];
-
         return exercises;
       }, initExercises)
     );
-  }
+  }, [exercisesList]);
 
-  handleCategorySelect = (category) =>
-    this.setState({
-      category,
-    });
+  const handleCategorySelect = (category) => {
+    setCategory(category);
+  };
 
-  handleExerciseSelect = (id) =>
-    this.setState(({ exercises }) => ({
-      exercise: exercises.find((ex) => ex.id === id),
-      editMode: false,
-    }));
+  const handleExerciseSelect = (id) => {
+    const selectedExercise = exercisesList.find((ex) => ex.id === id);
+    setExercise(selectedExercise);
+    setEditMode(false);
+  };
 
-  handleExerciseCreate = (exercise) =>
-    this.setState(({ exercises }) => ({
-      exercises: [...exercises, exercise],
-    }));
+  const handleExerciseCreate = (newExercise) => {
+    setExercisesList((prev) => [...prev, newExercise]);
+  };
 
-  handleExerciseDelete = (id) =>
-    this.setState(({ exercises, exercise, editMode }) => ({
-      exercises: exercises.filter((ex) => ex.id !== id),
-      editMode: exercise.id === id ? false : editMode,
-      exercise: exercise.id === id ? {} : exercise,
-    }));
+  const handleExerciseDelete = (id) => {
+    setExercisesList((prev) => prev.filter((ex) => ex.id !== id));
+    if (exercise.id === id) {
+      setExercise({});
+      setEditMode(false);
+    }
+  };
 
-  handleExerciseSelectEdit = (id) =>
-    this.setState(({ exercises }) => ({
-      exercise: exercises.find((ex) => ex.id === id),
-      editMode: true,
-    }));
+  const handleExerciseSelectEdit = (id) => {
+    const selectedExercise = exercisesList.find((ex) => ex.id === id);
+    setExercise(selectedExercise);
+    setEditMode(true);
+  };
 
-  handleExerciseEdit = (exercise) =>
-    this.setState(({ exercises }) => ({
-      exercises: [...exercises.filter((ex) => ex.id !== exercise.id), exercise],
-      exercise,
-    }));
+  const handleExerciseEdit = (updatedExercise) => {
+    setExercisesList((prev) => [
+      ...prev.filter((ex) => ex.id !== updatedExercise.id),
+      updatedExercise,
+    ]);
+    setExercise(updatedExercise);
+  };
 
-  getContext = () => ({
+  const contextValue = {
     muscles,
-    ...this.state,
-    exercisesByMuscles: this.getExercisesByMuscles(),
-    onCategorySelect: this.handleCategorySelect,
-    onCreate: this.handleExerciseCreate,
-    onEdit: this.handleExerciseEdit,
-    onSelectEdit: this.handleExerciseSelectEdit,
-    onDelete: this.handleExerciseDelete,
-    onSelect: this.handleExerciseSelect,
-  });
+    exercises: exercisesList,
+    exercise,
+    editMode,
+    category,
+    exercisesByMuscles: getExercisesByMuscles,
+    onCategorySelect: handleCategorySelect,
+    onCreate: handleExerciseCreate,
+    onEdit: handleExerciseEdit,
+    onSelectEdit: handleExerciseSelectEdit,
+    onDelete: handleExerciseDelete,
+    onSelect: handleExerciseSelect,
+  };
 
-  render() {
-    return (
-      <Provider value={this.getContext()}>
-        <CssBaseline />
-
-        <Header />
-
-        <Viewer />
-
-        <Footer />
-      </Provider>
-    );
-  }
-}
+  return (
+    <Provider value={contextValue}>
+      <CssBaseline />
+      <Header />
+      <Viewer />
+      <Footer />
+    </Provider>
+  );
+};
 
 export default App;

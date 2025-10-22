@@ -1,7 +1,8 @@
 import React from "react";
 import { Grid, Paper } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { Catalog, Preview } from "./";
+import Catalog from "./Catalog";
+import Preview from "./Preview";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
