@@ -1,26 +1,23 @@
-import React from 'react'
-import { AppBar, Toolbar, Typography } from '@material-ui/core'
-import CreateDialog from '../Exercises/Dialog'
-import { makeStyles } from '@material-ui/core/styles'
+import React from "react";
+import { AppBar, Toolbar, Typography } from "@mui/material";
+import CreateDialog from "../Exercises/Dialog";
+import { styled } from "@mui/material/styles";
 
-const useStyles = makeStyles({
-  Heading: {
-    flex: 1
-  },
-})
+const StyledTypography = styled(Typography)({
+  flex: 1,
+});
 
-
-export default () => {
-  const classes = useStyles()
-
+const Header = () => {
   return (
-    <AppBar position='static'>
+    <AppBar position="static">
       <Toolbar>
-        <Typography variant='h4' color='inherent' className={classes.Heading}>
-          Exercise Databasess
-        </Typography>
+        <StyledTypography variant="h4" color="inherit">
+          Exercise Database
+        </StyledTypography>
         <CreateDialog />
       </Toolbar>
     </AppBar>
-  )
-}
+  );
+};
+
+export default Header;

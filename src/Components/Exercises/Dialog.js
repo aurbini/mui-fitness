@@ -1,46 +1,41 @@
-  
-import React, { Component } from 'react'
+import React, { Component } from "react";
 import {
   Fab,
   Dialog as MuiDialog,
   DialogTitle,
   DialogContent,
-  DialogContentText
-} from '@material-ui/core'
-import { Add } from '@material-ui/icons'
-import { Form } from './'
-import { ExercisesContext } from '../../context'
+  DialogContentText,
+} from "@mui/material";
+import { Add } from "@mui/icons-material";
+import { Form } from "./";
+import { ExercisesContext } from "../../context";
 
 class Dialog extends Component {
-  static contextType = ExercisesContext
+  static contextType = ExercisesContext;
 
   state = {
-    open: false
-  }
+    open: false,
+  };
 
   handleToggle = () => {
     this.setState({
-      open: !this.state.open
-    })
-  }
+      open: !this.state.open,
+    });
+  };
 
-  handleFormSubmit = exercise => {
-    this.handleToggle()
+  handleFormSubmit = (exercise) => {
+    this.handleToggle();
 
-    this.context.onCreate(exercise)
-  }
+    this.context.onCreate(exercise);
+  };
 
-  render () {
-    const { open } = this.state
-    const { muscles } = this.context
+  render() {
+    const { open } = this.state;
+    const { muscles } = this.context;
 
     return (
       <>
-        <Fab
-          onClick={this.handleToggle}
-          color='secondary'
-          size='small'
-        >
+        <Fab onClick={this.handleToggle} color="secondary" size="small">
           <Add />
         </Fab>
 
@@ -48,22 +43,19 @@ class Dialog extends Component {
           open={open}
           onClose={this.handleToggle}
           fullWidth
-          maxWidth='xs'
+          maxWidth="xs"
         >
           <DialogTitle>Create a New Exercise</DialogTitle>
           <DialogContent>
             <DialogContentText>
               Please fill out the form below.
             </DialogContentText>
-            <Form
-              muscles={muscles}
-              onSubmit={this.handleFormSubmit}
-            />
+            <Form muscles={muscles} onSubmit={this.handleFormSubmit} />
           </DialogContent>
         </MuiDialog>
       </>
-    )
+    );
   }
 }
 
-export default Dialog
+export default Dialog;

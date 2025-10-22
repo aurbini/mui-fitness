@@ -4,16 +4,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^4.9.9",
-    "@material-ui/icons": "^4.9.1",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1",
-    "recompose": "^0.30.0",
-    "typeface-roboto": "0.0.75"
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.0",
+    "@mui/material": "^5.15.0",
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.1",
+    "ajv": "^8.17.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "^5.0.1",
+    "typeface-roboto": "^0.0.75",
+    "web-vitals": "^3.5.0"
   },
   "scripts": {
     "predeploy": "npm run build",
@@ -39,7 +42,7 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^2.2.0",
-    "standard": "^14.3.4"
+    "gh-pages": "^6.0.0",
+    "standard": "^17.1.0"
   }
 }

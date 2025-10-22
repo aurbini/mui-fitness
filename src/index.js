@@ -1,25 +1,26 @@
-import React from 'react'
-import { render } from 'react-dom'
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
-import { red, amber } from '@material-ui/core/colors'
-import App from './Components/App'
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { red, amber } from "@mui/material/colors";
+import App from "./Components/App";
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
     primary: red,
     secondary: {
       main: amber.A400,
       light: amber[200],
-      dark: amber[700]
+      dark: amber[700],
     },
-    type: 'dark'
+    mode: "dark",
   },
-  spacing: 10
-})
+  spacing: 10,
+});
 
-render(
-  <MuiThemeProvider theme={theme}>
+const container = document.getElementById("root");
+const root = createRoot(container);
+root.render(
+  <ThemeProvider theme={theme}>
     <App />
-  </MuiThemeProvider>,
-  document.getElementById('root')
-)
+  </ThemeProvider>
+);

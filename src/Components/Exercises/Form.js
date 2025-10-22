@@ -1,59 +1,57 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 import {
   TextField,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  Button
-} from '@material-ui/core'
+  Button,
+} from "@mui/material";
 
 class Form extends Component {
-  state = this.getInitState()
+  state = this.getInitState();
 
-  getInitState () {
-    const { exercise } = this.props
+  getInitState() {
+    const { exercise } = this.props;
 
-    return exercise || {
-      title: '',
-      description: '',
-      muscles: ''
-    }
+    return (
+      exercise || {
+        title: "",
+        description: "",
+        muscles: "",
+      }
+    );
   }
 
   handleChange = ({ target: { value, name } }) =>
     this.setState({
-      [name]: value
-    })
+      [name]: value,
+    });
 
   handleSubmit = () =>
     this.props.onSubmit({
-      id: this.state.title.toLowerCase().replace(/ /g, '-'),
-      ...this.state
-    })
+      id: this.state.title.toLowerCase().replace(/ /g, "-"),
+      ...this.state,
+    });
 
-  render () {
-    const { title, description, muscles } = this.state
-    const { exercise, muscles: categories } = this.props
+  render() {
+    const { title, description, muscles } = this.state;
+    const { exercise, muscles: categories } = this.props;
 
     return (
       <form>
         <TextField
-          label='Title'
+          label="Title"
           value={title}
-          name='title'
+          name="title"
           onChange={this.handleChange}
-          margin='normal'
+          margin="normal"
           fullWidth
         />
-        <FormControl fullWidth margin='normal'>
-          <InputLabel htmlFor='muscles'>Muscles</InputLabel>
-          <Select
-            value={muscles}
-            name='muscles'
-            onChange={this.handleChange}
-          >
-            {categories.map(category => (
+        <FormControl fullWidth margin="normal">
+          <InputLabel htmlFor="muscles">Muscles</InputLabel>
+          <Select value={muscles} name="muscles" onChange={this.handleChange}>
+            {categories.map((category) => (
               <MenuItem key={category} value={category}>
                 {category}
               </MenuItem>
@@ -62,25 +60,25 @@ class Form extends Component {
         </FormControl>
         <TextField
           multiline
-          rows='4'
-          label='Description'
+          rows="4"
+          label="Description"
           value={description}
-          name='description'
+          name="description"
           onChange={this.handleChange}
-          margin='normal'
+          margin="normal"
           fullWidth
         />
         <Button
-          color='primary'
-          variant='contained'
+          color="primary"
+          variant="contained"
           onClick={this.handleSubmit}
           disabled={!title || !muscles}
         >
-          {exercise ? 'Edit' : 'Create'}
+          {exercise ? "Edit" : "Create"}
         </Button>
       </form>
-    )
+    );
   }
 }
 
-export default Form
+export default Form;

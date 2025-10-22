@@ -1,75 +1,72 @@
-import React, { PureComponent } from 'react'
-import { CssBaseline } from '@material-ui/core'
-import { Header, Footer } from './Layouts'
-import { Viewer } from './Exercises'
-import { muscles, exercises } from '../store'
-import { Provider } from '../context'
+import React, { PureComponent } from "react";
+import { CssBaseline } from "@mui/material";
+import { Header, Footer } from "./Layouts";
+import { Viewer } from "./Exercises";
+import { muscles, exercises } from "../store";
+import { Provider } from "../context";
 
 class App extends PureComponent {
   state = {
     exercises,
     exercise: {},
     editMode: false,
-    category: ''
-  }
+    category: "",
+  };
 
-  getExercisesByMuscles () {
+  getExercisesByMuscles() {
     const initExercises = muscles.reduce(
       (exercises, category) => ({
         ...exercises,
-        [category]: []
+        [category]: [],
       }),
       {}
-    )
+    );
 
     return Object.entries(
       this.state.exercises.reduce((exercises, exercise) => {
-        const { muscles } = exercise
+        const { muscles } = exercise;
 
-        exercises[muscles] = [...exercises[muscles], exercise]
+        exercises[muscles] = [...exercises[muscles], exercise];
 
-        return exercises
+        return exercises;
       }, initExercises)
-    )
+    );
   }
 
-  handleCategorySelect = category =>
+  handleCategorySelect = (category) =>
     this.setState({
-      category
-    })
+      category,
+    });
 
-  handleExerciseSelect = id =>
+  handleExerciseSelect = (id) =>
     this.setState(({ exercises }) => ({
-      exercise: exercises.find(ex => ex.id === id),
-      editMode: false
-    }))
+      exercise: exercises.find((ex) => ex.id === id),
+      editMode: false,
+    }));
 
-  handleExerciseCreate = exercise =>
+  handleExerciseCreate = (exercise) =>
     this.setState(({ exercises }) => ({
-      exercises: [...exercises, exercise]
-    }))
+      exercises: [...exercises, exercise],
+    }));
 
-  handleExerciseDelete = id =>
+  handleExerciseDelete = (id) =>
     this.setState(({ exercises, exercise, editMode }) => ({
-      exercises: exercises.filter(ex => ex.id !== id),
+      exercises: exercises.filter((ex) => ex.id !== id),
       editMode: exercise.id === id ? false : editMode,
-      exercise: exercise.id === id ? {} : exercise
-    }))
+      exercise: exercise.id === id ? {} : exercise,
+    }));
 
-  handleExerciseSelectEdit = id =>
+  handleExerciseSelectEdit = (id) =>
     this.setState(({ exercises }) => ({
-      exercise: exercises.find(ex => ex.id === id),
-      editMode: true
-    }))
+      exercise: exercises.find((ex) => ex.id === id),
+      editMode: true,
+    }));
 
-  handleExerciseEdit = exercise =>
+  handleExerciseEdit = (exercise) =>
     this.setState(({ exercises }) => ({
-      exercises: [
-        ...exercises.filter(ex => ex.id !== exercise.id),
-        exercise
-      ],
-      exercise
-    }))
+      exercises: [...exercises.filter((ex) => ex.id !== exercise.id), exercise],
+      exercise,
+    }));
 
   getContext = () => ({
     muscles,
@@ -80,10 +77,10 @@ class App extends PureComponent {
     onEdit: this.handleExerciseEdit,
     onSelectEdit: this.handleExerciseSelectEdit,
     onDelete: this.handleExerciseDelete,
-    onSelect: this.handleExerciseSelect
-  })
+    onSelect: this.handleExerciseSelect,
+  });
 
-  render () {
+  render() {
     return (
       <Provider value={this.getContext()}>
         <CssBaseline />
@@ -94,8 +91,8 @@ class App extends PureComponent {
 
         <Footer />
       </Provider>
-    )
+    );
   }
 }
 
-export default App
+export default App;

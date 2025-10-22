@@ -1,54 +1,48 @@
-  
-import React from 'react'
-import { Grid, Paper } from '@material-ui/core'
-import { withStyles } from '@material-ui/core/styles'
-import { Catalog, Preview } from './'
+import React from "react";
+import { Grid, Paper } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { Catalog, Preview } from "./";
 
-const styles = theme => ({
-  paper: {
-    padding: theme.spacing(3),
-    overflowY: 'auto',
-    [theme.breakpoints.up('sm')]: {
-      marginTop: 5,
-      height: 'calc(100% - 10px)'
-    },
-    [theme.breakpoints.down('xs')]: {
-      height: '100%'
-    }
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(3),
+  overflowY: "auto",
+  [theme.breakpoints.up("sm")]: {
+    marginTop: 5,
+    height: "calc(100% - 10px)",
   },
-  '@global': {
-    'html, body, #root': {
-      height: '100%'
-    }
+  [theme.breakpoints.down("sm")]: {
+    height: "100%",
   },
-  container: {
-    [theme.breakpoints.up('sm')]: {
-      height: 'calc(100% - 64px - 48px)'
-    },
-    [theme.breakpoints.down('xs')]: {
-      height: 'calc(100% - 56px - 48px)'
-    }
-  },
-  item: {
-    [theme.breakpoints.down('xs')]: {
-      height: '50%'
-    }
-  }
-})
+}));
 
-const Viewer = ({ classes }) => (
-  <Grid container className={classes.container}>
-    <Grid item className={classes.item} xs={12} sm={6}>
-      <Paper className={classes.paper}>
+const StyledGrid = styled(Grid)(({ theme }) => ({
+  [theme.breakpoints.up("sm")]: {
+    height: "calc(100% - 64px - 48px)",
+  },
+  [theme.breakpoints.down("sm")]: {
+    height: "calc(100% - 56px - 48px)",
+  },
+}));
+
+const StyledGridItem = styled(Grid)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    height: "50%",
+  },
+}));
+
+const Viewer = () => (
+  <StyledGrid container>
+    <StyledGridItem item xs={12} sm={6}>
+      <StyledPaper>
         <Catalog />
-      </Paper>
-    </Grid>
-    <Grid item className={classes.item} xs={12} sm={6}>
-      <Paper className={classes.paper}>
+      </StyledPaper>
+    </StyledGridItem>
+    <StyledGridItem item xs={12} sm={6}>
+      <StyledPaper>
         <Preview />
-      </Paper>
-    </Grid>
-  </Grid>
-)
+      </StyledPaper>
+    </StyledGridItem>
+  </StyledGrid>
+);
 
-export default withStyles(styles)(Viewer)
+export default Viewer;

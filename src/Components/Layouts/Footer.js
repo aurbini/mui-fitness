@@ -1,47 +1,37 @@
-import React, { Component } from 'react'
-import { compose } from 'recompose'
-import { withWidth, AppBar, Tabs, Tab } from '@material-ui/core'
-import { withContext } from '../../context'
+import React from "react";
+import { AppBar, Tabs, Tab, useMediaQuery, useTheme } from "@mui/material";
+import { withContext } from "../../context";
 
-class Footer extends Component {
-  muscles = this.getMuscles()
+const Footer = ({ muscles, category, onCategorySelect }) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  getMuscles () {
-    return [ '', ...this.props.muscles ]
-  }
+  const muscleGroups = ["", ...muscles];
 
-  onIndexSelect = (e, index) => {
-    this.props.onCategorySelect(this.muscles[index])
-  }
+  const onIndexSelect = (e, index) => {
+    onCategorySelect(muscleGroups[index]);
+  };
 
-  getIndex = () => {
-    return this.muscles.indexOf(this.props.category)
-  }
+  const getIndex = () => {
+    return muscleGroups.indexOf(category);
+  };
 
-  render () {
-    const { width } = this.props
-    const isMobile = width === 'xs'
+  return (
+    <AppBar position="static">
+      <Tabs
+        value={getIndex()}
+        onChange={onIndexSelect}
+        indicatorColor="secondary"
+        textColor="secondary"
+        variant={isMobile ? "scrollable" : "standard"}
+        centered={!isMobile}
+      >
+        {muscleGroups.map((group) => (
+          <Tab key={group} label={group || "All"} />
+        ))}
+      </Tabs>
+    </AppBar>
+  );
+};
 
-    return (
-      <AppBar position='static'>
-        <Tabs
-          value={this.getIndex()}
-          onChange={this.onIndexSelect}
-          indicatorColor='secondary'
-          textColor='secondary'
-          variant={isMobile ? 'scrollable' : 'standard'}
-          centered={!isMobile}
-        >
-          {this.muscles.map(group =>
-            <Tab key={group} label={group || 'All'} />
-          )}
-        </Tabs>
-      </AppBar>
-    )
-  }
-}
-
-export default compose(
-  withContext,
-  withWidth()
-)(Footer)
+export default withContext(Footer);

@@ -1,73 +1,66 @@
-import React, { Fragment } from 'react'
-import { compose } from 'recompose'
+import React, { Fragment } from "react";
 import {
   Typography,
   List,
   ListItem,
   ListItemText,
-  ListItemSecondaryAction,
-  IconButton
-} from '@material-ui/core'
-import { withStyles } from '@material-ui/core/styles'
-import { Edit, Delete } from '@material-ui/icons'
-import { withContext } from '../../context'
+  ListItemButton,
+  IconButton,
+  Box,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { Edit, Delete } from "@mui/icons-material";
+import { withContext } from "../../context";
 
-const styles = {
-  title: {
-    textTransform: 'capitalize'
-  }
-}
+const StyledTypography = styled(Typography)({
+  textTransform: "capitalize",
+});
 
 const Catalog = ({
-  classes,
   exercisesByMuscles,
   category,
   onSelect,
   onDelete,
-  onSelectEdit
-}) => (
+  onSelectEdit,
+}) =>
   exercisesByMuscles.map(
     ([group, exercises]) =>
       (!category || category === group) && (
         <Fragment key={group}>
-          <Typography
-            className={classes.title}
-            color='secondary'
-            variant='h5'
-          >
+          <StyledTypography color="secondary" variant="h5">
             {group}
-          </Typography>
-          <List component='ul'>
+          </StyledTypography>
+          <List component="ul">
             {exercises.map(({ id, title }) => (
-              <ListItem
-                key={id}
-                button
-                onClick={() => onSelect(id)}
-              >
-                <ListItemText primary={title} />
-                <ListItemSecondaryAction>
-                  <IconButton
-                    color='primary'
-                    onClick={() => onSelectEdit(id)}
-                  >
-                    <Edit />
-                  </IconButton>
-                  <IconButton
-                    color='primary'
-                    onClick={() => onDelete(id)}
-                  >
-                    <Delete />
-                  </IconButton>
-                </ListItemSecondaryAction>
+              <ListItem key={id} disablePadding>
+                <ListItemButton onClick={() => onSelect(id)}>
+                  <ListItemText primary={title} />
+                  <Box>
+                    <IconButton
+                      color="primary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectEdit(id);
+                      }}
+                    >
+                      <Edit />
+                    </IconButton>
+                    <IconButton
+                      color="primary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(id);
+                      }}
+                    >
+                      <Delete />
+                    </IconButton>
+                  </Box>
+                </ListItemButton>
               </ListItem>
             ))}
           </List>
         </Fragment>
       )
-  )
-)
+  );
 
-export default compose(
-  withContext,
-  withStyles(styles)
-)(Catalog)
+export default withContext(Catalog);
