@@ -1,23 +1,10 @@
 {
   "files": {
-    "main.js": "/mui-fitness/static/js/main.43364958.chunk.js",
-    "main.js.map": "/mui-fitness/static/js/main.43364958.chunk.js.map",
-    "runtime-main.js": "/mui-fitness/static/js/runtime-main.2759a503.js",
-    "runtime-main.js.map": "/mui-fitness/static/js/runtime-main.2759a503.js.map",
-    "static/css/2.670156d2.chunk.css": "/mui-fitness/static/css/2.670156d2.chunk.css",
-    "static/js/2.93952672.chunk.js": "/mui-fitness/static/js/2.93952672.chunk.js",
-    "static/js/2.93952672.chunk.js.map": "/mui-fitness/static/js/2.93952672.chunk.js.map",
+    "main.js": "/mui-fitness/static/js/main.8db8db82.js",
     "index.html": "/mui-fitness/index.html",
-    "precache-manifest.4ea5d6b9449aaf5ddfb5ed4b106d4e7e.js": "/mui-fitness/precache-manifest.4ea5d6b9449aaf5ddfb5ed4b106d4e7e.js",
-    "service-worker.js": "/mui-fitness/service-worker.js",
-    "static/css/2.670156d2.chunk.css.map": "/mui-fitness/static/css/2.670156d2.chunk.css.map",
-    "static/js/2.93952672.chunk.js.LICENSE.txt": "/mui-fitness/static/js/2.93952672.chunk.js.LICENSE.txt",
-    "static/media/index.css": "/mui-fitness/static/media/roboto-latin-900italic.ebf6d164.woff2"
+    "main.8db8db82.js.map": "/mui-fitness/static/js/main.8db8db82.js.map"
   },
   "entrypoints": [
-    "static/js/runtime-main.2759a503.js",
-    "static/css/2.670156d2.chunk.css",
-    "static/js/2.93952672.chunk.js",
-    "static/js/main.43364958.chunk.js"
+    "static/js/main.8db8db82.js"
   ]
 }
