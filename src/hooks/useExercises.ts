@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { db, realtime } from "../lib/supabase";
 import { useAuth } from "../contexts/AuthContext";
+import { Exercise, MuscleGroup } from "../types/exercise";
 
 export const useExercises = () => {
   const { user } = useAuth();
-  const [exercises, setExercises] = useState([]);
-  const [muscleGroups, setMuscleGroups] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
+  const [muscleGroups, setMuscleGroups] = useState<MuscleGroup[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Load initial data
   useEffect(() => {
@@ -28,7 +29,7 @@ export const useExercises = () => {
             await db.getMuscleGroups();
           if (muscleGroupsError) throw muscleGroupsError;
           setMuscleGroups(muscleGroupsData || []);
-        } catch (err) {
+        } catch (err: any) {
           setError(err.message);
           console.error("Error loading data:", err);
         } finally {
@@ -48,29 +49,32 @@ export const useExercises = () => {
   useEffect(() => {
     if (!user) return;
 
-    const subscription = realtime.subscribeToExercises(user.id, (payload) => {
-      console.log("Real-time update:", payload);
+    const subscription = realtime.subscribeToExercises(
+      user.id,
+      (payload: any) => {
+        console.log("Real-time update:", payload);
 
-      switch (payload.eventType) {
-        case "INSERT":
-          setExercises((prev) => [payload.new, ...prev]);
-          break;
-        case "UPDATE":
-          setExercises((prev) =>
-            prev.map((exercise) =>
-              exercise.id === payload.new.id ? payload.new : exercise
-            )
-          );
-          break;
-        case "DELETE":
-          setExercises((prev) =>
-            prev.filter((exercise) => exercise.id !== payload.old.id)
-          );
-          break;
-        default:
-          break;
+        switch (payload.eventType) {
+          case "INSERT":
+            setExercises((prev) => [payload.new, ...prev]);
+            break;
+          case "UPDATE":
+            setExercises((prev) =>
+              prev.map((exercise) =>
+                exercise.id === payload.new.id ? payload.new : exercise
+              )
+            );
+            break;
+          case "DELETE":
+            setExercises((prev) =>
+              prev.filter((exercise) => exercise.id !== payload.old.id)
+            );
+            break;
+          default:
+            break;
+        }
       }
-    });
+    );
 
     return () => {
       subscription.unsubscribe();
@@ -78,13 +82,15 @@ export const useExercises = () => {
   }, [user]);
 
   const loadExercises = async () => {
+    if (!user) return;
+
     try {
       setLoading(true);
       setError(null);
       const { data, error } = await db.getExercises(user.id);
       if (error) throw error;
       setExercises(data || []);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
       console.error("Error loading exercises:", err);
     } finally {
@@ -92,17 +98,7 @@ export const useExercises = () => {
     }
   };
 
-  const loadMuscleGroups = async () => {
-    try {
-      const { data, error } = await db.getMuscleGroups();
-      if (error) throw error;
-      setMuscleGroups(data || []);
-    } catch (err) {
-      console.error("Error loading muscle groups:", err);
-    }
-  };
-
-  const createExercise = async (exerciseData) => {
+  const createExercise = async (exerciseData: Partial<Exercise>) => {
     if (!user) return { data: null, error: new Error("No user logged in") };
 
     try {
@@ -116,55 +112,56 @@ export const useExercises = () => {
 
       // Real-time subscription will handle adding to state
       return { data, error: null };
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
       return { data: null, error: err };
     }
   };
 
-  const updateExercise = async (exerciseId, updates) => {
+  const updateExercise = async (
+    exerciseId: string,
+    updates: Partial<Exercise>
+  ) => {
     try {
       const { data, error } = await db.updateExercise(exerciseId, updates);
       if (error) throw error;
 
       // Real-time subscription will handle updating state
       return { data, error: null };
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
       return { data: null, error: err };
     }
   };
 
-  const deleteExercise = async (exerciseId) => {
+  const deleteExercise = async (exerciseId: string) => {
     try {
       const { error } = await db.deleteExercise(exerciseId);
       if (error) throw error;
 
       // Real-time subscription will handle removing from state
       return { error: null };
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
       return { error: err };
     }
   };
 
-  const toggleFavorite = async (exerciseId, isFavorite) => {
+  const toggleFavorite = async (exerciseId: string, isFavorite: boolean) => {
     try {
       const { data, error } = await db.toggleFavorite(exerciseId, isFavorite);
       if (error) throw error;
 
       // Real-time subscription will handle updating state
       return { data, error: null };
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
       return { data: null, error: err };
     }
   };
 
-  const getExercisesByMuscleGroup = (muscleGroup) => {
-    return exercises.filter(
-      (exercise) => exercise.muscle_group === muscleGroup
-    );
+  const getExercisesByMuscleGroup = (muscleGroup: string) => {
+    return exercises.filter((exercise) => exercise.muscles === muscleGroup);
   };
 
   return {

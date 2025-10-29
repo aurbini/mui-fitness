@@ -9,6 +9,7 @@ import {
 import { Add } from "@mui/icons-material";
 import Form from "./Form";
 import { useExercises } from "../../context";
+import { ExerciseFormData } from "../../types/exercise";
 
 const Dialog = () => {
   const [open, setOpen] = useState(false);
@@ -18,7 +19,7 @@ const Dialog = () => {
     setOpen(!open);
   };
 
-  const handleFormSubmit = (exercise) => {
+  const handleFormSubmit = (exercise: ExerciseFormData) => {
     handleToggle();
     onCreate(exercise);
   };

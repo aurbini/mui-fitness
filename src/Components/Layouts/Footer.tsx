@@ -9,7 +9,7 @@ const Footer = () => {
 
   const muscleGroups = ["", ...muscles];
 
-  const onIndexSelect = (e, index) => {
+  const onIndexSelect = (e: React.SyntheticEvent, index: number) => {
     onCategorySelect(muscleGroups[index]);
   };
 

@@ -8,7 +8,7 @@ import { muscles } from "../store";
 import { Provider } from "../context";
 import { AuthProvider, useAuth } from "../contexts/AuthContext";
 import { useExercises } from "../hooks/useExercises";
-import { ExerciseWithMuscleGroup, ExerciseFormData } from "../types/exercise";
+import { Exercise } from "../types/exercise";
 // Main App Component with Supabase integration
 const AppContent = () => {
   const { user, loading: authLoading } = useAuth();
@@ -22,7 +22,7 @@ const AppContent = () => {
     deleteExercise,
   } = useExercises();
 
-  const [exercise, setExercise] = useState<ExerciseWithMuscleGroup | {}>({});
+  const [exercise, setExercise] = useState<Exercise | {}>({});
   const [editMode, setEditMode] = useState<boolean>(false);
   const [category, setCategory] = useState<string>("");
 
@@ -36,13 +36,13 @@ const AppContent = () => {
         ...exercises,
         [category]: [],
       }),
-      {}
+      {} as Record<string, Exercise[]>
     );
 
     return Object.entries(
       exercisesList.reduce((exercises, exercise) => {
-        const { muscle_group } = exercise;
-        exercises[muscle_group] = [...exercises[muscle_group], exercise];
+        const { muscles } = exercise;
+        exercises[muscles] = [...exercises[muscles], exercise];
         return exercises;
       }, initExercises)
     );
@@ -73,10 +73,10 @@ const AppContent = () => {
       exercisesByMuscles: [],
       loading: false,
       onCategorySelect: () => {},
-      onCreate: () => {},
-      onEdit: () => {},
+      onCreate: async () => {},
+      onEdit: async () => {},
       onSelectEdit: () => {},
-      onDelete: () => {},
+      onDelete: async () => {},
       onSelect: () => {},
     };
 
@@ -106,7 +106,7 @@ const AppContent = () => {
     setEditMode(false);
   };
 
-  const handleExerciseCreate = async (newExercise: ExerciseFormData) => {
+  const handleExerciseCreate = async (newExercise: Partial<Exercise>) => {
     try {
       // Get muscle group ID from name
       const muscleGroup = muscleGroups.find(
@@ -117,9 +117,9 @@ const AppContent = () => {
       }
 
       const exerciseData = {
-        title: newExercise.title,
-        description: newExercise.description,
-        muscle_group_id: muscleGroup.id,
+        title: newExercise.title || "",
+        description: newExercise.description || "",
+        muscles: newExercise.muscles || "",
         sets: newExercise.sets || 0,
         reps: newExercise.reps || 0,
         weight: newExercise.weight || 0,
@@ -155,9 +155,7 @@ const AppContent = () => {
     setEditMode(true);
   };
 
-  const handleExerciseEdit = async (
-    updatedExercise: ExerciseFormData & { id: string }
-  ) => {
+  const handleExerciseEdit = async (updatedExercise: Partial<Exercise>) => {
     try {
       // Get muscle group ID from name
       const muscleGroup = muscleGroups.find(
@@ -168,9 +166,9 @@ const AppContent = () => {
       }
 
       const exerciseData = {
-        title: updatedExercise.title,
-        description: updatedExercise.description,
-        muscle_group_id: muscleGroup.id,
+        title: updatedExercise.title || "",
+        description: updatedExercise.description || "",
+        muscles: updatedExercise.muscles || "",
         sets: updatedExercise.sets || 0,
         reps: updatedExercise.reps || 0,
         weight: updatedExercise.weight || 0,
@@ -178,6 +176,10 @@ const AppContent = () => {
         notes: updatedExercise.notes || "",
         is_favorite: updatedExercise.is_favorite || false,
       };
+
+      if (!updatedExercise.id) {
+        throw new Error("Exercise ID is required for editing");
+      }
 
       const { error } = await updateExercise(updatedExercise.id, exerciseData);
       if (error) throw error;

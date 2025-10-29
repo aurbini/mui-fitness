@@ -28,13 +28,13 @@ const LoginForm = () => {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleTabChange = (event, newValue) => {
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
     setError("");
     setMessage("");
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -42,7 +42,7 @@ const LoginForm = () => {
     }));
   };
 
-  const handleSignIn = async (e) => {
+  const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -51,14 +51,14 @@ const LoginForm = () => {
     try {
       const { error } = await signIn(formData.email, formData.password);
       if (error) throw error;
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSignUp = async (e) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -82,7 +82,7 @@ const LoginForm = () => {
       });
       if (error) throw error;
       setMessage("Check your email for verification link!");
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -106,7 +106,7 @@ const LoginForm = () => {
 
       // Google OAuth redirects, so we won't reach here normally
       console.log("Google sign-in successful, redirecting...");
-    } catch (err) {
+    } catch (err: any) {
       console.error("Google sign-in failed:", err);
       setError(err.message || "Google sign-in failed. Please try again.");
       setLoading(false);

@@ -25,7 +25,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 // Auth helper functions
 export const auth = {
   // Sign up with email and password
-  signUp: async (email, password, userData = {}) => {
+  signUp: async (email: string, password: string, userData: any = {}) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -37,7 +37,7 @@ export const auth = {
   },
 
   // Sign in with email and password
-  signIn: async (email, password) => {
+  signIn: async (email: string, password: string) => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -77,7 +77,7 @@ export const auth = {
   },
 
   // Listen to auth state changes
-  onAuthStateChange: (callback) => {
+  onAuthStateChange: (callback: any) => {
     return supabase.auth.onAuthStateChange(callback);
   },
 };
@@ -85,7 +85,7 @@ export const auth = {
 // Database helper functions
 export const db = {
   // Get user profile
-  getProfile: async (userId) => {
+  getProfile: async (userId: string) => {
     const { data, error } = await supabase
       .from("profiles")
       .select("*")
@@ -95,7 +95,7 @@ export const db = {
   },
 
   // Update user profile
-  updateProfile: async (userId, updates) => {
+  updateProfile: async (userId: string, updates: any) => {
     const { data, error } = await supabase
       .from("profiles")
       .update(updates)
@@ -114,7 +114,7 @@ export const db = {
   },
 
   // Get user's exercises
-  getExercises: async (userId) => {
+  getExercises: async (userId: string) => {
     const { data, error } = await supabase
       .from("exercises_with_muscle_groups")
       .select("*")
@@ -124,7 +124,7 @@ export const db = {
   },
 
   // Get exercises by muscle group
-  getExercisesByMuscleGroup: async (userId, muscleGroup) => {
+  getExercisesByMuscleGroup: async (userId: string, muscleGroup: string) => {
     const { data, error } = await supabase
       .from("exercises_with_muscle_groups")
       .select("*")
@@ -135,7 +135,7 @@ export const db = {
   },
 
   // Create new exercise
-  createExercise: async (exerciseData) => {
+  createExercise: async (exerciseData: any) => {
     const { data, error } = await supabase
       .from("exercises")
       .insert(exerciseData)
@@ -144,7 +144,7 @@ export const db = {
   },
 
   // Update exercise
-  updateExercise: async (exerciseId, updates) => {
+  updateExercise: async (exerciseId: string, updates: any) => {
     const { data, error } = await supabase
       .from("exercises")
       .update(updates)
@@ -154,7 +154,7 @@ export const db = {
   },
 
   // Delete exercise
-  deleteExercise: async (exerciseId) => {
+  deleteExercise: async (exerciseId: string) => {
     const { error } = await supabase
       .from("exercises")
       .delete()
@@ -163,7 +163,7 @@ export const db = {
   },
 
   // Toggle exercise favorite status
-  toggleFavorite: async (exerciseId, isFavorite) => {
+  toggleFavorite: async (exerciseId: string, isFavorite: boolean) => {
     const { data, error } = await supabase
       .from("exercises")
       .update({ is_favorite: isFavorite })
@@ -176,7 +176,7 @@ export const db = {
 // Real-time subscriptions
 export const realtime = {
   // Subscribe to exercises changes
-  subscribeToExercises: (userId, callback) => {
+  subscribeToExercises: (userId: string, callback: any) => {
     return supabase
       .channel("exercises")
       .on(
@@ -193,7 +193,7 @@ export const realtime = {
   },
 
   // Subscribe to profile changes
-  subscribeToProfile: (userId, callback) => {
+  subscribeToProfile: (userId: string, callback: any) => {
     return supabase
       .channel("profile")
       .on(

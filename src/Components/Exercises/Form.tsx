@@ -7,8 +7,15 @@ import {
   MenuItem,
   Button,
 } from "@mui/material";
+import { Exercise, ExerciseFormData } from "../../types/exercise";
 
-const Form = ({ exercise, muscles: categories, onSubmit }) => {
+interface FormProps {
+  exercise?: Exercise | {};
+  muscles: string[];
+  onSubmit: (exercise: ExerciseFormData) => void;
+}
+
+const Form = ({ exercise, muscles: categories, onSubmit }: FormProps) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -16,7 +23,7 @@ const Form = ({ exercise, muscles: categories, onSubmit }) => {
   });
 
   useEffect(() => {
-    if (exercise) {
+    if (exercise && "title" in exercise) {
       setFormData({
         title: exercise.title || "",
         description: exercise.description || "",
@@ -25,7 +32,8 @@ const Form = ({ exercise, muscles: categories, onSubmit }) => {
     }
   }, [exercise]);
 
-  const handleChange = ({ target: { value, name } }) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement> | any) => {
+    const { value, name } = event.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,

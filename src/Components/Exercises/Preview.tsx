@@ -5,7 +5,10 @@ import Form from "./Form";
 
 const Preview = () => {
   const { muscles, editMode, exercise, onEdit } = useExercises();
-  const { id, title, description } = exercise;
+  const { id, title, description } =
+    exercise && "id" in exercise
+      ? exercise
+      : { id: "", title: "", description: "" };
 
   return (
     <>

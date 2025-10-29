@@ -26,6 +26,7 @@ export interface ExerciseWithMuscleGroup extends Exercise {
 }
 
 export interface ExerciseFormData {
+  id?: string;
   title: string;
   description: string;
   muscles: string;

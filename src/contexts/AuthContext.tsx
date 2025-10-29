@@ -30,15 +30,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
-      const {
-        data: { session },
-      } = await auth.getCurrentUser();
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        await loadProfile(session.user.id);
+      const { data, error } = await auth.getCurrentUser();
+      if (error) {
+        console.error("Error getting current user:", error);
+        setUser(null);
+      } else {
+        setUser(data.user ?? null);
+        if (data.user) {
+          await loadProfile(data.user.id);
+        }
       }
-
       setLoading(false);
     };
 
@@ -47,7 +48,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = auth.onAuthStateChange(async (event, session) => {
+    } = auth.onAuthStateChange(async (event: any, session: any) => {
       setUser(session?.user ?? null);
 
       if (session?.user) {
@@ -62,22 +63,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const loadProfile = async (userId) => {
+  const loadProfile = async (userId: string) => {
     try {
       const { data, error } = await db.getProfile(userId);
       if (error) throw error;
-      setProfile(data);
+      setProfile(Array.isArray(data) ? data[0] : data);
     } catch (error) {
       console.error("Error loading profile:", error);
     }
   };
 
-  const signUp = async (email, password, userData = {}) => {
+  const signUp = async (
+    email: string,
+    password: string,
+    userData: any = {}
+  ) => {
     const { data, error } = await auth.signUp(email, password, userData);
     return { data, error };
   };
 
-  const signIn = async (email, password) => {
+  const signIn = async (email: string, password: string) => {
     const { data, error } = await auth.signIn(email, password);
     return { data, error };
   };
@@ -93,12 +98,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return { error };
   };
 
-  const updateProfile = async (updates) => {
+  const updateProfile = async (updates: any) => {
     if (!user) return { data: null, error: new Error("No user logged in") };
 
     const { data, error } = await db.updateProfile(user.id, updates);
     if (!error && data) {
-      setProfile(data);
+      setProfile(Array.isArray(data) ? data[0] : data);
     }
     return { data, error };
   };
