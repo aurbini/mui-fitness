@@ -3,7 +3,8 @@ export interface Exercise {
   id: string;
   title: string;
   description: string;
-  muscles: string;
+  muscles?: string; // For UI compatibility
+  muscle_group?: string; // From database view
   sets?: number;
   reps?: number;
   weight?: number;
@@ -50,4 +51,17 @@ export interface CreateExerciseData {
   notes?: string;
   is_favorite?: boolean;
   user_id: string;
+}
+
+// Database exercise update data
+export interface UpdateExerciseData {
+  title?: string;
+  description?: string;
+  muscle_group_id?: number;
+  sets?: number;
+  reps?: number;
+  weight?: number;
+  duration?: number;
+  notes?: string;
+  is_favorite?: boolean;
 }
