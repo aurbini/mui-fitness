@@ -1,16 +1,20 @@
 import { createClient } from "@supabase/supabase-js";
+import { CreateExerciseData, UpdateExerciseData } from "../types/exercise";
 
 // Supabase configuration
-const supabaseUrl =
-  process.env.REACT_APP_SUPABASE_URL ||
-  "https://yejmovdqgtvqrmbrxqsk.supabase.co";
-const supabaseAnonKey =
-  process.env.REACT_APP_SUPABASE_ANON_KEY ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inllam1vdmRxZ3R2cXJtYnJ4cXNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE2MDM0OTEsImV4cCI6MjA3NzE3OTQ5MX0.lxG299sqX0FqCWdIRzI3dus8y01IOB9_X8OVNt4uXyM";
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
 
-console.log("Supabase configuration:", {
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error(
+    "Missing Supabase environment variables. Please check your .env file."
+  );
+}
+
+console.log("🔧 Supabase configuration:", {
   url: supabaseUrl,
   keyPresent: supabaseAnonKey ? "Yes" : "No",
+  keyLength: supabaseAnonKey?.length || 0,
 });
 
 // Create Supabase client
@@ -90,7 +94,7 @@ export const db = {
       .from("profiles")
       .select("*")
       .eq("id", userId)
-      .single();
+      .maybeSingle(); // Use maybeSingle() instead of single() to handle 0 rows
     return { data, error };
   },
 
@@ -135,7 +139,7 @@ export const db = {
   },
 
   // Create new exercise
-  createExercise: async (exerciseData: any) => {
+  createExercise: async (exerciseData: CreateExerciseData) => {
     const { data, error } = await supabase
       .from("exercises")
       .insert(exerciseData)
@@ -144,7 +148,7 @@ export const db = {
   },
 
   // Update exercise
-  updateExercise: async (exerciseId: string, updates: any) => {
+  updateExercise: async (exerciseId: string, updates: UpdateExerciseData) => {
     const { data, error } = await supabase
       .from("exercises")
       .update(updates)

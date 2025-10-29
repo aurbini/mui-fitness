@@ -30,17 +30,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
-      const { data, error } = await auth.getCurrentUser();
-      if (error) {
-        console.error("Error getting current user:", error);
-        setUser(null);
-      } else {
-        setUser(data.user ?? null);
-        if (data.user) {
-          await loadProfile(data.user.id);
+      console.log("🔍 AuthContext: Getting initial session...");
+      try {
+        const { data, error } = await auth.getCurrentUser();
+        console.log("🔍 AuthContext: getCurrentUser result:", { data, error });
+
+        if (error) {
+          console.error("❌ Error getting current user:", error);
+          setUser(null);
+        } else {
+          console.log("✅ User data:", data.user);
+          setUser(data.user ?? null);
+          if (data.user) {
+            console.log("🔍 Loading profile for user:", data.user.id);
+            await loadProfile(data.user.id);
+          }
         }
+      } catch (err) {
+        console.error("❌ Exception in getInitialSession:", err);
+        setUser(null);
+      } finally {
+        console.log("✅ AuthContext: Setting loading to false");
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     getInitialSession();
@@ -65,11 +77,29 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const loadProfile = async (userId: string) => {
     try {
+      console.log("🔍 Loading profile for user:", userId);
       const { data, error } = await db.getProfile(userId);
-      if (error) throw error;
-      setProfile(Array.isArray(data) ? data[0] : data);
+      console.log("🔍 Profile data:", { data, error });
+
+      if (error) {
+        console.error("❌ Error loading profile:", error);
+        setProfile(null);
+        return;
+      }
+
+      // Handle case where profile doesn't exist yet
+      if (data) {
+        setProfile(data);
+        console.log("✅ Profile loaded:", data);
+      } else {
+        console.log(
+          "ℹ️ No profile found for user, will be created on first update"
+        );
+        setProfile(null);
+      }
     } catch (error) {
-      console.error("Error loading profile:", error);
+      console.error("❌ Exception loading profile:", error);
+      setProfile(null);
     }
   };
 

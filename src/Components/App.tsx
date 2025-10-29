@@ -31,6 +31,11 @@ const AppContent = () => {
     muscleGroups.length > 0 ? muscleGroups.map((mg) => mg.name) : muscles;
 
   const getExercisesByMuscles = useMemo(() => {
+    // Safety check for exercisesList
+    if (!Array.isArray(exercisesList)) {
+      return [];
+    }
+
     const initExercises = availableMuscles.reduce(
       (exercises, category) => ({
         ...exercises,
@@ -41,12 +46,16 @@ const AppContent = () => {
 
     return Object.entries(
       exercisesList.reduce((exercises, exercise) => {
-        const { muscles } = exercise;
-        exercises[muscles] = [...exercises[muscles], exercise];
+        // Map muscle_group from database to muscles for UI
+        const muscleGroup = exercise.muscle_group || exercise.muscles;
+
+        if (muscleGroup && exercises[muscleGroup]) {
+          exercises[muscleGroup] = [...exercises[muscleGroup], exercise];
+        }
         return exercises;
       }, initExercises)
     );
-  }, [exercisesList, availableMuscles]);
+  }, [exercisesList, availableMuscles, muscleGroups]);
 
   // Show loading spinner while checking authentication
   if (authLoading) {
@@ -101,6 +110,7 @@ const AppContent = () => {
   };
 
   const handleExerciseSelect = (id: string) => {
+    if (!Array.isArray(exercisesList)) return;
     const selectedExercise = exercisesList.find((ex) => ex.id === id);
     setExercise(selectedExercise || {});
     setEditMode(false);
@@ -150,6 +160,7 @@ const AppContent = () => {
   };
 
   const handleExerciseSelectEdit = (id: string) => {
+    if (!Array.isArray(exercisesList)) return;
     const selectedExercise = exercisesList.find((ex) => ex.id === id);
     setExercise(selectedExercise || {});
     setEditMode(true);
