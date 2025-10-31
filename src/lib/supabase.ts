@@ -51,13 +51,13 @@ export const auth = {
 
   // Sign in with Google
   signInWithGoogle: async () => {
-    console.log("Starting Google OAuth flow...");
-    console.log("Redirect URL:", `${window.location.origin}`);
+    // Get the current origin with port (e.g., http://localhost:3000)
+    const redirectUrl = `${window.location.origin}${window.location.pathname}`;
 
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}`,
+        redirectTo: redirectUrl,
         queryParams: {
           access_type: "offline",
           prompt: "consent",
@@ -65,8 +65,13 @@ export const auth = {
       },
     });
 
-    console.log("OAuth response:", { data, error });
-    return { data, error };
+    if (error) {
+      console.error("OAuth error:", error);
+      return { data: null, error };
+    }
+
+    // OAuth redirects the user, so this return won't be reached normally
+    return { data, error: null };
   },
 
   // Sign out
