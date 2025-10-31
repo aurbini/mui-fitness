@@ -3,7 +3,7 @@ import { CssBaseline, CircularProgress, Box } from "@mui/material";
 import Header from "./Layouts/Header";
 import Footer from "./Layouts/Footer";
 import Viewer from "./Exercises/Viewer";
-import { WorkoutsPage } from "./Workouts";
+import { WorkoutsPage } from "./Workouts/index";
 import LoginForm from "./Auth/LoginForm";
 import { muscles } from "../store";
 import { Provider } from "../context";
