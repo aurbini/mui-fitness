@@ -57,7 +57,8 @@ export const auth = {
 
   // Sign in with Google
   signInWithGoogle: async () => {
-    // Get the current origin with port (e.g., http://localhost:3000)
+    // Always use the current origin - this will be correct in production (Vercel URL)
+    // and in development (localhost). The browser knows where it's running.
     const redirectUrl = `${window.location.origin}${window.location.pathname}`;
 
     const { data, error } = await supabase.auth.signInWithOAuth({
