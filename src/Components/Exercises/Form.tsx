@@ -8,18 +8,19 @@ import {
   Button,
 } from "@mui/material";
 import { Exercise, ExerciseFormData } from "../../types/exercise";
+import { MuscleGroup } from "../../types/exercise";
 
 interface FormProps {
   exercise?: Exercise | {};
-  muscles: string[];
+  muscleGroups: MuscleGroup[];
   onSubmit: (exercise: ExerciseFormData) => void;
 }
 
-const Form = ({ exercise, muscles: categories, onSubmit }: FormProps) => {
+const Form = ({ exercise, muscleGroups, onSubmit }: FormProps) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    muscles: "",
+    muscle_group_id: 0,
   });
 
   useEffect(() => {
@@ -27,7 +28,7 @@ const Form = ({ exercise, muscles: categories, onSubmit }: FormProps) => {
       setFormData({
         title: exercise.title || "",
         description: exercise.description || "",
-        muscles: exercise.muscles || "",
+        muscle_group_id: exercise.muscle_group_id || 0,
       });
     }
   }, [exercise]);
@@ -36,7 +37,7 @@ const Form = ({ exercise, muscles: categories, onSubmit }: FormProps) => {
     const { value, name } = event.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "muscle_group_id" ? parseInt(value) : value,
     }));
   };
 
@@ -58,11 +59,15 @@ const Form = ({ exercise, muscles: categories, onSubmit }: FormProps) => {
         fullWidth
       />
       <FormControl fullWidth margin="normal">
-        <InputLabel htmlFor="muscles">Muscles</InputLabel>
-        <Select value={formData.muscles} name="muscles" onChange={handleChange}>
-          {categories.map((category) => (
-            <MenuItem key={category} value={category}>
-              {category}
+        <InputLabel htmlFor="muscle_group_id">Muscle Group</InputLabel>
+        <Select
+          value={formData.muscle_group_id}
+          name="muscle_group_id"
+          onChange={handleChange}
+        >
+          {muscleGroups.map((muscleGroup) => (
+            <MenuItem key={muscleGroup.id} value={muscleGroup.id}>
+              {muscleGroup.name}
             </MenuItem>
           ))}
         </Select>
@@ -81,7 +86,7 @@ const Form = ({ exercise, muscles: categories, onSubmit }: FormProps) => {
         color="primary"
         variant="contained"
         onClick={handleSubmit}
-        disabled={!formData.title || !formData.muscles}
+        disabled={!formData.title || !formData.muscle_group_id}
       >
         {exercise ? "Edit" : "Create"}
       </Button>

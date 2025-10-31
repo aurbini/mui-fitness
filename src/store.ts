@@ -4,48 +4,56 @@ import { Exercise } from "./types/exercise";
 export const muscles: string[] = ["shoulders", "chest", "arms", "back", "legs"];
 
 // Default exercises structure for reference - actual data comes from Supabase
+// Note: These are fallback exercises and won't be used in production since data comes from Supabase
 export const defaultExercises: Exercise[] = [
   {
     id: "overhead-press",
+    user_id: "default",
     title: "Overhead Press",
     description: "Delts exercise...",
-    muscles: "shoulders",
+    muscle_group_id: 1, // shoulders
   },
   {
     id: "dips",
+    user_id: "default",
     title: "Dips",
     description: "Triceps exercise...",
-    muscles: "arms",
+    muscle_group_id: 3, // arms
   },
   {
     id: "barbell-curls",
+    user_id: "default",
     title: "Barbell Curls",
     description: "Biceps exercise...",
-    muscles: "arms",
+    muscle_group_id: 3, // arms
   },
   {
     id: "bench-press",
+    user_id: "default",
     title: "Bench Press",
     description: "Chest exercise...",
-    muscles: "chest",
+    muscle_group_id: 2, // chest
   },
   {
     id: "pull-ups",
+    user_id: "default",
     title: "Pull Ups",
     description: "Back and biceps exercise...",
-    muscles: "back",
+    muscle_group_id: 4, // back
   },
   {
     id: "deadlifts",
+    user_id: "default",
     title: "Deadlifts",
     description: "Back and leg exercise...",
-    muscles: "back",
+    muscle_group_id: 4, // back
   },
   {
     id: "squats",
+    user_id: "default",
     title: "Squats",
     description: "Legs exercise...",
-    muscles: "legs",
+    muscle_group_id: 5, // legs
   },
 ];
 

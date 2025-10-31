@@ -1,5 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 import { CreateExerciseData, UpdateExerciseData } from "../types/exercise";
+import {
+  CreateWorkoutData,
+  UpdateWorkoutData,
+  CreateWorkoutExerciseData,
+  UpdateWorkoutExerciseData,
+} from "../types/workout";
 
 // Supabase configuration
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
@@ -207,6 +213,111 @@ export const realtime = {
           schema: "public",
           table: "profiles",
           filter: `id=eq.${userId}`,
+        },
+        callback
+      )
+      .subscribe();
+  },
+};
+
+// Workout database functions
+export const workoutDb = {
+  // Get all workouts for a user
+  getWorkouts: async (userId: string) => {
+    const { data, error } = await supabase
+      .from("workouts")
+      .select("*")
+      .eq("user_id", userId)
+      .order("workout_date", { ascending: false });
+    return { data, error };
+  },
+
+  // Get a single workout with exercises
+  getWorkoutWithExercises: async (workoutId: string) => {
+    const { data, error } = await supabase
+      .from("workouts_with_exercises")
+      .select("*")
+      .eq("workout_id", workoutId)
+      .order("order_index", { ascending: true });
+    return { data, error };
+  },
+
+  // Create a new workout
+  createWorkout: async (workoutData: CreateWorkoutData) => {
+    const { data, error } = await supabase
+      .from("workouts")
+      .insert(workoutData)
+      .select()
+      .single();
+    return { data, error };
+  },
+
+  // Update a workout
+  updateWorkout: async (workoutId: string, updates: UpdateWorkoutData) => {
+    const { data, error } = await supabase
+      .from("workouts")
+      .update(updates)
+      .eq("id", workoutId)
+      .select()
+      .single();
+    return { data, error };
+  },
+
+  // Delete a workout
+  deleteWorkout: async (workoutId: string) => {
+    const { error } = await supabase
+      .from("workouts")
+      .delete()
+      .eq("id", workoutId);
+    return { error };
+  },
+
+  // Add exercise to workout
+  addExerciseToWorkout: async (
+    workoutExerciseData: CreateWorkoutExerciseData
+  ) => {
+    const { data, error } = await supabase
+      .from("workout_exercises")
+      .insert(workoutExerciseData)
+      .select()
+      .single();
+    return { data, error };
+  },
+
+  // Update workout exercise
+  updateWorkoutExercise: async (
+    workoutExerciseId: string,
+    updates: UpdateWorkoutExerciseData
+  ) => {
+    const { data, error } = await supabase
+      .from("workout_exercises")
+      .update(updates)
+      .eq("id", workoutExerciseId)
+      .select()
+      .single();
+    return { data, error };
+  },
+
+  // Remove exercise from workout
+  removeExerciseFromWorkout: async (workoutExerciseId: string) => {
+    const { error } = await supabase
+      .from("workout_exercises")
+      .delete()
+      .eq("id", workoutExerciseId);
+    return { error };
+  },
+
+  // Subscribe to workout changes
+  subscribeToWorkouts: (userId: string, callback: any) => {
+    return supabase
+      .channel("workouts")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "workouts",
+          filter: `user_id=eq.${userId}`,
         },
         callback
       )

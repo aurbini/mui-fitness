@@ -4,7 +4,7 @@ import { useExercises } from "../../context";
 import Form from "./Form";
 
 const Preview = () => {
-  const { muscles, editMode, exercise, onEdit } = useExercises();
+  const { muscleGroups, editMode, exercise, onEdit } = useExercises();
   const { id, title, description } =
     exercise && "id" in exercise
       ? exercise
@@ -19,7 +19,7 @@ const Preview = () => {
         <Form
           key={id}
           exercise={exercise}
-          muscles={muscles}
+          muscleGroups={muscleGroups}
           onSubmit={onEdit}
         />
       ) : (

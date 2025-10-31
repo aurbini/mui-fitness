@@ -1,18 +1,16 @@
 // Exercise related types
 export interface Exercise {
   id: string;
+  user_id: string;
   title: string;
   description: string;
-  muscles?: string; // For UI compatibility
-  muscle_group?: string; // From database view
-  sets?: number;
-  reps?: number;
-  weight?: number;
-  duration?: number;
-  notes?: string;
-  is_favorite?: boolean;
+  muscle_group_id: number;
   created_at?: string;
   updated_at?: string;
+}
+
+export interface ExerciseWithMuscleGroup extends Exercise {
+  muscle_group: string;
 }
 
 export interface MuscleGroup {
@@ -30,13 +28,7 @@ export interface ExerciseFormData {
   id?: string;
   title: string;
   description: string;
-  muscles: string;
-  sets?: number;
-  reps?: number;
-  weight?: number;
-  duration?: number;
-  notes?: string;
-  is_favorite?: boolean;
+  muscle_group_id: number;
 }
 
 // Database exercise creation data
@@ -44,12 +36,6 @@ export interface CreateExerciseData {
   title: string;
   description: string;
   muscle_group_id: number;
-  sets?: number;
-  reps?: number;
-  weight?: number;
-  duration?: number;
-  notes?: string;
-  is_favorite?: boolean;
   user_id: string;
 }
 
@@ -58,10 +44,4 @@ export interface UpdateExerciseData {
   title?: string;
   description?: string;
   muscle_group_id?: number;
-  sets?: number;
-  reps?: number;
-  weight?: number;
-  duration?: number;
-  notes?: string;
-  is_favorite?: boolean;
 }

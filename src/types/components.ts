@@ -51,3 +51,4 @@ export interface ExercisePreviewProps {
   muscles: string[];
   onEdit: (exercise: ExerciseFormData) => void;
 }
+

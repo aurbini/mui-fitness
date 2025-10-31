@@ -1,8 +1,10 @@
 // Context related types
-import { Exercise, ExerciseWithMuscleGroup } from "./exercise";
+import { Exercise, ExerciseWithMuscleGroup, MuscleGroup } from "./exercise";
+import { Workout, WorkoutWithExercises } from "./workout";
 
 export interface ExercisesContextType {
   muscles: string[];
+  muscleGroups: MuscleGroup[];
   exercises: Exercise[];
   exercise: Exercise | {};
   editMode: boolean;
@@ -15,4 +17,16 @@ export interface ExercisesContextType {
   onSelectEdit: (id: string) => void;
   onDelete: (id: string) => Promise<void>;
   onSelect: (id: string) => void;
+}
+
+export interface WorkoutsContextType {
+  workouts: Workout[];
+  currentWorkout: WorkoutWithExercises | null;
+  loading: boolean;
+  onCreateWorkout: (workout: Partial<Workout>) => Promise<void>;
+  onUpdateWorkout: (id: string, workout: Partial<Workout>) => Promise<void>;
+  onDeleteWorkout: (id: string) => Promise<void>;
+  onLoadWorkout: (id: string) => Promise<void>;
+  onAddExerciseToWorkout: (workoutId: string, exercise: any) => Promise<void>;
+  onRemoveExerciseFromWorkout: (workoutExerciseId: string) => Promise<void>;
 }

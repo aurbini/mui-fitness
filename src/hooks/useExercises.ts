@@ -126,24 +126,15 @@ export const useExercises = () => {
     if (!user) return { data: null, error: new Error("No user logged in") };
 
     try {
-      // Get muscle group ID from name
-      const muscleGroup = muscleGroups.find(
-        (mg) => mg.name === exerciseData.muscles
-      );
-      if (!muscleGroup) {
-        throw new Error("Invalid muscle group");
+      // Get muscle group ID from muscle_group_id
+      if (!exerciseData.muscle_group_id) {
+        throw new Error("Muscle group ID is required");
       }
 
       const createData: CreateExerciseData = {
         title: exerciseData.title || "",
         description: exerciseData.description || "",
-        muscle_group_id: muscleGroup.id,
-        sets: exerciseData.sets || 0,
-        reps: exerciseData.reps || 0,
-        weight: exerciseData.weight || 0,
-        duration: exerciseData.duration || 0,
-        notes: exerciseData.notes || "",
-        is_favorite: exerciseData.is_favorite || false,
+        muscle_group_id: exerciseData.muscle_group_id,
         user_id: user.id,
       };
 
@@ -166,28 +157,12 @@ export const useExercises = () => {
       // If muscle group is being updated, get the muscle group ID
       let updateData: UpdateExerciseData = {};
 
-      // Copy over all the fields except muscles
+      // Copy over only the fields that exist in the new Exercise structure
       if (updates.title !== undefined) updateData.title = updates.title;
       if (updates.description !== undefined)
         updateData.description = updates.description;
-      if (updates.sets !== undefined) updateData.sets = updates.sets;
-      if (updates.reps !== undefined) updateData.reps = updates.reps;
-      if (updates.weight !== undefined) updateData.weight = updates.weight;
-      if (updates.duration !== undefined)
-        updateData.duration = updates.duration;
-      if (updates.notes !== undefined) updateData.notes = updates.notes;
-      if (updates.is_favorite !== undefined)
-        updateData.is_favorite = updates.is_favorite;
-
-      if (updates.muscles) {
-        const muscleGroup = muscleGroups.find(
-          (mg) => mg.name === updates.muscles
-        );
-        if (!muscleGroup) {
-          throw new Error("Invalid muscle group");
-        }
-        updateData.muscle_group_id = muscleGroup.id;
-      }
+      if (updates.muscle_group_id !== undefined)
+        updateData.muscle_group_id = updates.muscle_group_id;
 
       const { data, error } = await db.updateExercise(exerciseId, updateData);
       if (error) throw error;
@@ -227,7 +202,14 @@ export const useExercises = () => {
   };
 
   const getExercisesByMuscleGroup = (muscleGroup: string) => {
-    return exercises.filter((exercise) => exercise.muscles === muscleGroup);
+    // Find the muscle group ID by name
+    const muscleGroupObj = muscleGroups.find((mg) => mg.name === muscleGroup);
+    if (!muscleGroupObj) return [];
+
+    // Filter exercises by muscle_group_id
+    return exercises.filter(
+      (exercise) => exercise.muscle_group_id === muscleGroupObj.id
+    );
   };
 
   return {

@@ -3,6 +3,7 @@ import { CssBaseline, CircularProgress, Box } from "@mui/material";
 import Header from "./Layouts/Header";
 import Footer from "./Layouts/Footer";
 import Viewer from "./Exercises/Viewer";
+import { WorkoutsPage } from "./Workouts";
 import LoginForm from "./Auth/LoginForm";
 import { muscles } from "../store";
 import { Provider } from "../context";
@@ -25,6 +26,11 @@ const AppContent = () => {
   const [exercise, setExercise] = useState<Exercise | {}>({});
   const [editMode, setEditMode] = useState<boolean>(false);
   const [category, setCategory] = useState<string>("");
+  const [currentTab, setCurrentTab] = useState<number>(0);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setCurrentTab(newValue);
+  };
 
   // Get muscle groups from Supabase or fallback to static data
   const availableMuscles =
@@ -46,8 +52,10 @@ const AppContent = () => {
 
     return Object.entries(
       exercisesList.reduce((exercises, exercise) => {
-        // Map muscle_group from database to muscles for UI
-        const muscleGroup = exercise.muscle_group || exercise.muscles;
+        // Get muscle group name from muscle_group_id
+        const muscleGroup = muscleGroups.find(
+          (mg) => mg.id === exercise.muscle_group_id
+        )?.name;
 
         if (muscleGroup && exercises[muscleGroup]) {
           exercises[muscleGroup] = [...exercises[muscleGroup], exercise];
@@ -75,6 +83,7 @@ const AppContent = () => {
   if (!user) {
     const contextValue = {
       muscles: availableMuscles,
+      muscleGroups: muscleGroups,
       exercises: exercisesList,
       exercise: {},
       editMode: false,
@@ -95,7 +104,7 @@ const AppContent = () => {
           sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
         >
           <CssBaseline />
-          <Header />
+          <Header currentTab={currentTab} onTabChange={handleTabChange} />
           <Box sx={{ flex: 1 }}>
             <LoginForm />
           </Box>
@@ -118,24 +127,15 @@ const AppContent = () => {
 
   const handleExerciseCreate = async (newExercise: Partial<Exercise>) => {
     try {
-      // Get muscle group ID from name
-      const muscleGroup = muscleGroups.find(
-        (mg) => mg.name === newExercise.muscles
-      );
-      if (!muscleGroup) {
-        throw new Error("Invalid muscle group");
+      // The exercise should already have muscle_group_id from the form
+      if (!newExercise.muscle_group_id) {
+        throw new Error("Muscle group is required");
       }
 
       const exerciseData = {
         title: newExercise.title || "",
         description: newExercise.description || "",
-        muscles: newExercise.muscles || "",
-        sets: newExercise.sets || 0,
-        reps: newExercise.reps || 0,
-        weight: newExercise.weight || 0,
-        duration: newExercise.duration || 0,
-        notes: newExercise.notes || "",
-        is_favorite: newExercise.is_favorite || false,
+        muscle_group_id: newExercise.muscle_group_id,
       };
 
       const { error } = await createExercise(exerciseData);
@@ -168,24 +168,15 @@ const AppContent = () => {
 
   const handleExerciseEdit = async (updatedExercise: Partial<Exercise>) => {
     try {
-      // Get muscle group ID from name
-      const muscleGroup = muscleGroups.find(
-        (mg) => mg.name === updatedExercise.muscles
-      );
-      if (!muscleGroup) {
-        throw new Error("Invalid muscle group");
+      // The exercise should already have muscle_group_id from the form
+      if (!updatedExercise.muscle_group_id) {
+        throw new Error("Muscle group is required");
       }
 
       const exerciseData = {
         title: updatedExercise.title || "",
         description: updatedExercise.description || "",
-        muscles: updatedExercise.muscles || "",
-        sets: updatedExercise.sets || 0,
-        reps: updatedExercise.reps || 0,
-        weight: updatedExercise.weight || 0,
-        duration: updatedExercise.duration || 0,
-        notes: updatedExercise.notes || "",
-        is_favorite: updatedExercise.is_favorite || false,
+        muscle_group_id: updatedExercise.muscle_group_id,
       };
 
       if (!updatedExercise.id) {
@@ -203,6 +194,7 @@ const AppContent = () => {
 
   const contextValue = {
     muscles: availableMuscles,
+    muscleGroups: muscleGroups,
     exercises: exercisesList,
     exercise,
     editMode,
@@ -223,19 +215,23 @@ const AppContent = () => {
         sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
       >
         <CssBaseline />
-        <Header />
+        <Header currentTab={currentTab} onTabChange={handleTabChange} />
         <Box sx={{ flex: 1 }}>
-          {exercisesLoading ? (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              minHeight="50vh"
-            >
-              <CircularProgress />
-            </Box>
+          {currentTab === 0 ? (
+            exercisesLoading ? (
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                minHeight="50vh"
+              >
+                <CircularProgress />
+              </Box>
+            ) : (
+              <Viewer />
+            )
           ) : (
-            <Viewer />
+            <WorkoutsPage />
           )}
         </Box>
         <Footer />
