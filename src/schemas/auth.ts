@@ -44,3 +44,4 @@ export const profileUpdateSchema = {
     message: "Please enter a valid URL",
   },
 };
+
