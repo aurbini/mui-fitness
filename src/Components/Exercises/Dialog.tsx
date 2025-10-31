@@ -13,7 +13,7 @@ import { ExerciseFormData } from "../../types/exercise";
 
 const Dialog = () => {
   const [open, setOpen] = useState(false);
-  const { muscles, onCreate } = useExercises();
+  const { muscleGroups, onCreate } = useExercises();
 
   const handleToggle = () => {
     setOpen(!open);
@@ -34,7 +34,7 @@ const Dialog = () => {
         <DialogTitle>Create a New Exercise</DialogTitle>
         <DialogContent>
           <DialogContentText>Please fill out the form below.</DialogContentText>
-          <Form muscles={muscles} onSubmit={handleFormSubmit} />
+          <Form muscleGroups={muscleGroups} onSubmit={handleFormSubmit} />
         </DialogContent>
       </MuiDialog>
     </>
